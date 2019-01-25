@@ -271,7 +271,8 @@ const clubController = function (app) {
         };
 
         const sql = 'SELECT ' + 
-                        'clubs.id, IF(clubs.user_id = ?, 1, 0) AS club_adm,IF(club_applications.user_id = ?, 1, 0) AS has_application , ' + 
+                        'clubs.id,  IF(clubs.user_id = ?, 1, 0) AS club_adm, ' + 
+                        ' IF(club_applications.user_id = ?, 1, 0) AS has_application , ' + 
                         ' clubs.club_name, clubs.description, clubs.private, clubs.image,  ' +
                         '(SELECT COUNT(*) FROM club_members WHERE club_members.club_id = clubs.id) AS total_members, ' +
                         '(SELECT COUNT(club_members.id) FROM club_members ' +
@@ -286,6 +287,8 @@ const clubController = function (app) {
                         'club_members ON club_members.club_id = clubs.id   ' +
                     'LEFT JOIN   ' +
                         'club_applications ON club_applications.club_id = clubs.id  ' +
+                    'LEFT JOIN   ' +
+                        'users ON club_members.club_id = users.id  ' +
                     'WHERE   ' + 
                         'clubs.club_name = ?  AND ' +
                         'club_genders.gender_id = ? ' +
@@ -296,7 +299,7 @@ const clubController = function (app) {
         
 
 
-        req.connection.query(sql,[userInformation.user_id, 
+        req.connection.query(sql,[userInformation.user_id,
                                   userInformation.user_id,
                                   userInformation.user_id, 
                                   userInformation.club_name, 
